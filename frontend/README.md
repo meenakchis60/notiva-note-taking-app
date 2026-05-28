@@ -14,13 +14,13 @@ npm run build
 ## Local URL
 
 ```text
-http://127.0.0.1:5174
+import.meta.env.VITE_API_URL
 ```
 
 The backend should be running on:
 
 ```text
-http://127.0.0.1:8000
+import.meta.env.VITE_API_URL
 ```
 
 ## Main Screens

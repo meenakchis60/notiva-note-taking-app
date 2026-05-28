@@ -50,4 +50,4 @@ npm install
 npm run build
 ```
 
-After GitHub Pages is rebuilt with `VITE_API_URL`, registration and login will call the deployed Django API instead of `127.0.0.1`.
+After GitHub Pages is rebuilt with `VITE_API_URL`, registration and login will call the deployed Django API instead of `import.meta.env.VITE_API_URL`.

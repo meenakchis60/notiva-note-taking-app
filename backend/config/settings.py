@@ -30,7 +30,7 @@ DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = [
     host.strip()
-    for host in os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+    for host in os.environ.get('DJANGO_ALLOWED_HOSTS', 'import.meta.env.VITE_API_URL').split(',')
     if host.strip()
 ]
 
@@ -120,12 +120,12 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://localhost:5174",
-    "http://localhost:5175",
-    "http://127.0.0.1:5173",
-    "http://127.0.0.1:5174",
-    "http://127.0.0.1:5175",
+    "import.meta.env.VITE_API_URL",
+    "import.meta.env.VITE_API_URL",
+    "import.meta.env.VITE_API_URL",
+    "import.meta.env.VITE_API_URL",
+    "import.meta.env.VITE_API_URL",
+    "import.meta.env.VITE_API_URL",
 ]
 
 FRONTEND_URL = os.environ.get('FRONTEND_URL')
