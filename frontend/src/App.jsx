@@ -4,7 +4,7 @@ import axios from "axios";
 import "./App.css";
 import Login from "./Login";
 
-const API_URL = import.meta.env.VITE_API_URL || "import.meta.env.VITE_API_URL";
+const API_URL = import.meta.env.VITE_API_URL || "https://notiva-backend-n3v8.onrender.com";
 const emptyNote = {
   title: "",
   content: "",

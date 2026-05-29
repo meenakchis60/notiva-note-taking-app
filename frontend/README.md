@@ -14,13 +14,13 @@ npm run build
 ## Local URL
 
 ```text
-import.meta.env.VITE_API_URL
+https://notiva-backend-n3v8.onrender.com
 ```
 
 The backend should be running on:
 
 ```text
-import.meta.env.VITE_API_URL
+https://notiva-backend-n3v8.onrender.com
 ```
 
 ## Main Screens
