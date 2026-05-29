@@ -69,28 +69,47 @@ def test_api(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def filter_notes(request):
-    subject = request.GET.get('subject')
-    notebook = request.GET.get('notebook')
+    subject = request.GET.get('subject', '').strip()
+    notebook = request.GET.get('notebook', '').strip()
+    tag = request.GET.get('tag', '').strip()
+    search = request.GET.get('search', '').strip()
+    starred = request.GET.get('starred', '').strip()
 
     notes = Note.objects.filter(user=request.user, is_deleted=False)
 
-    if subject:
-        notes = notes.filter(subject__iexact=subject)
+    if request.GET.get("trash") == "true":
+        notes = Note.objects.filter(user=request.user, is_deleted=True)
 
-    if notebook:
-        notes = notes.filter(notebook__iexact=notebook)
+    if search:
+        notes = notes.filter(Q(title__icontains=search) | Q(content__icontains=search) | Q(tags__icontains=search))
+    if starred == "true":
+        notes = notes.filter(is_starred=True)
 
-    notebooks = sorted({note.notebook for note in notes if note.notebook})
+    def with_filters(queryset, include_subject=True, include_notebook=True, include_tag=True):
+        if include_subject and subject:
+            queryset = queryset.filter(subject__iexact=subject)
+        if include_notebook and notebook:
+            queryset = queryset.filter(notebook__iexact=notebook)
+        if include_tag and tag:
+            queryset = queryset.filter(tags__icontains=tag)
+        return queryset
+
+    subject_notes = with_filters(notes, include_subject=False)
+    notebook_notes = with_filters(notes, include_notebook=False)
+    tag_notes = with_filters(notes, include_tag=False)
+    folder_notes = with_filters(notes)
+
+    notebooks = sorted({note.notebook for note in notebook_notes if note.notebook})
     tags = sorted({
         tag.strip()
-        for note in notes
+        for note in tag_notes
         for tag in note.tags.split(",")
         if tag.strip()
     })
-    subjects = sorted({note.subject for note in notes if note.subject})
-    folders = sorted({note.folder_path for note in notes if note.folder_path})
+    subjects = sorted({note.subject for note in subject_notes if note.subject})
+    folders = sorted({note.folder_path for note in folder_notes if note.folder_path})
 
-    return Response({"subject": subject, "subjects": subjects, "notebooks": notebooks, "folders": folders, "tags": tags})
+    return Response({"subjects": subjects, "notebooks": notebooks, "folders": folders, "tags": tags})
 
 
 @api_view(['GET', 'POST'])

@@ -84,6 +84,20 @@ function App() {
     return params.toString();
   }, [activeView, filters]);
 
+  const updateFilter = (field, value) => {
+    setFilters((current) => {
+      const nextFilters = { ...current, [field]: value };
+      if (field === "subject") {
+        nextFilters.notebook = "";
+        nextFilters.tag = "";
+      }
+      if (field === "notebook") {
+        nextFilters.tag = "";
+      }
+      return nextFilters;
+    });
+  };
+
   const loadNotes = async () => {
     if (!localStorage.getItem("access")) return;
     try {
@@ -98,7 +112,9 @@ function App() {
 
   const loadMetadata = async () => {
     try {
-      const response = await requestWithAuth((headers) => axios.get(`${API_URL}/filter/`, { headers }));
+      const response = await requestWithAuth((headers) =>
+        axios.get(`${API_URL}/filter/${queryString ? `?${queryString}` : ""}`, { headers }),
+      );
       setMetadata(response.data);
     } catch (error) {
       handleApiError(error, "Could not load filters.");
@@ -317,7 +333,7 @@ function App() {
             type="search"
             placeholder="Search title, content, or tags"
             value={filters.search}
-            onChange={(event) => setFilters((current) => ({ ...current, search: event.target.value }))}
+            onChange={(event) => updateFilter("search", event.target.value)}
           />
         </header>
 
@@ -387,20 +403,20 @@ function App() {
 
             <section className="notes-panel">
               <div className="filters">
-                <select value={filters.subject} onChange={(event) => setFilters((current) => ({ ...current, subject: event.target.value }))}>
+                <select value={filters.subject} onChange={(event) => updateFilter("subject", event.target.value)}>
                   <option value="">All subjects</option>
                   {metadata.subjects.map((subject) => <option key={subject} value={subject}>{subject}</option>)}
                 </select>
-                <select value={filters.notebook} onChange={(event) => setFilters((current) => ({ ...current, notebook: event.target.value }))}>
+                <select value={filters.notebook} onChange={(event) => updateFilter("notebook", event.target.value)}>
                   <option value="">All notebooks</option>
                   {metadata.notebooks.map((notebook) => <option key={notebook} value={notebook}>{notebook}</option>)}
                 </select>
-                <select value={filters.tag} onChange={(event) => setFilters((current) => ({ ...current, tag: event.target.value }))}>
+                <select value={filters.tag} onChange={(event) => updateFilter("tag", event.target.value)}>
                   <option value="">All tags</option>
                   {metadata.tags.map((tag) => <option key={tag} value={tag}>{tag}</option>)}
                 </select>
                 <label className="toggle-row">
-                  <input type="checkbox" checked={filters.starred} onChange={(event) => setFilters((current) => ({ ...current, starred: event.target.checked }))} />
+                  <input type="checkbox" checked={filters.starred} onChange={(event) => updateFilter("starred", event.target.checked)} />
                   Starred
                 </label>
               </div>
